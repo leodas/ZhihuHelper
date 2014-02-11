@@ -11,6 +11,7 @@ if __name__ == '__main__':
     parser = optparse.OptionParser()
     parser.add_option('-u', '--user', dest='username')
     parser.add_option('-p', '--password', dest='passwd')
+    parser.add_option('-s', '--dest', dest='dest_user')
     parser.add_option('-b', '--backup', action='store_true', dest='backup')
     parser.add_option('-d', '--delete', action='store_true', dest='delete')
     options, args = parser.parse_args()
@@ -21,7 +22,11 @@ if __name__ == '__main__':
             print 'Login Failed, exit'
             exit(1)
 
-    answers, answers_size = session.getAnswers()
+    if options.dest_user:
+        answers, answers_size = session.getAnswers(options.dest_user)
+    else:
+        answers, answers_size = session.getAnswers()
+
     print '%d answers found' % answers_size
 
     import sys
@@ -39,7 +44,7 @@ if __name__ == '__main__':
         f.close()
         print '%d answers has saved in %s' % (answers_size, session.me.link_name + '-answers')
 
-    if options.delete:
+    if options.delete and not options.dest_user:
         for answer in answers:
             session.delAnswer(answer)
         print '%d answers has removed'
